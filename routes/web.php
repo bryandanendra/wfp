@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\KategoriAdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -51,19 +54,17 @@ Route::get('/menu/{type}', function ($type) {
 
 
 Route::prefix('admin')->group(function () {
-    Route::get('/categories', function () {
-        return view('admin.categories');
-    });
+    Route::get('/dashboard', [OrderController::class, 'dashboard'])->name('dashboard');
     
-    Route::get('/order', function () {
-        return view('admin.orders');
-    });
+    Route::resource('categories', KategoriAdminController::class);
     
-    Route::get('/members', function () {
-        return view('admin.members');
-    });
+    Route::get('/reports', [OrderController::class, 'reports'])->name('reports');
+    
+    Route::resource('food', FoodController::class);
+    Route::resource('members', MemberController::class);
+    Route::resource('orders', OrderController::class);
 });
 
 Route::get('daftar-kategori',[KategoriController::class,'index']);
 
-Route::resource('food',FoodController::class);
+// Route::resource('food',FoodController::class);
