@@ -9,7 +9,7 @@ class KategoriController extends Controller
 {
     public function index()
     {
-        // $kategoris = DB::select("select id, name from categories");   
+         $kategoris = Category::all();   
         
         //cara2
         // $kategoris = DB::table('categories')

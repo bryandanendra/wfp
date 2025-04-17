@@ -19,7 +19,9 @@ use App\Http\Controllers\KategoriAdminController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    $categories = \App\Models\Category::all();
+    $foods = \App\Models\Food::all();
+    return view('welcome', ['categories' => $categories, 'foods' => $foods]);
 });
 
 Route::get('manggil-view',function(){
@@ -66,5 +68,10 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::get('daftar-kategori',[KategoriController::class,'index']);
+
+Route::get('/food/{id}', function ($id) {
+    $food = \App\Models\Food::findOrFail($id);
+    return view('food.detail', ['food' => $food]);
+})->name('food.detail');
 
 // Route::resource('food',FoodController::class);
