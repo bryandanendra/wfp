@@ -63,4 +63,10 @@ class KategoriAdminController extends Controller
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
     }
+
+    public function show(Request $request)
+    {
+        print_r($request->all());
+        exit;
+    }
 } 
