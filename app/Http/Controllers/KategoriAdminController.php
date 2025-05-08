@@ -63,10 +63,14 @@ class KategoriAdminController extends Controller
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
     }
-
-    public function show(Request $request)
+    //dikelas
+    public function storing(Request $request)
     {
-        print_r($request->all());
-        exit;
+        $category = new Category();
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->save();
+        return redirect()->route('categories.index')->with('success', 'Data ' . $request->name . ' berhasil ditambahkan');
+        
     }
 } 
