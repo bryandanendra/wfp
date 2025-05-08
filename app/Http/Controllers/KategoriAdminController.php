@@ -20,17 +20,20 @@ class KategoriAdminController extends Controller
     
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'description' => 'nullable'
-        ]);
+        // $request->validate([
+        //     'name' => 'required',
+        //     'description' => 'nullable'
+        // ]);
         
-        Category::create([
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
-        
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan');
+        // Category::create([
+        //     'name' => $request->name,
+        //     'description' => $request->description
+        // ]);
+        $category = new Category();
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->save();
+        return redirect()->route('categories.index')->with('success', 'Kategori ' . $request->name . ' berhasil ditambahkan');
     }
     
     public function edit(Category $category)
@@ -62,15 +65,5 @@ class KategoriAdminController extends Controller
         
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
-    }
-    //dikelas
-    public function storing(Request $request)
-    {
-        $category = new Category();
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->save();
-        return redirect()->route('categories.index')->with('success', 'Data ' . $request->name . ' berhasil ditambahkan');
-        
     }
 } 

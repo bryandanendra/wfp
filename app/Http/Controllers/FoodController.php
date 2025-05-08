@@ -63,4 +63,19 @@ class FoodController extends Controller
     {
         //
     }
+
+    /**
+     * Storing food item into database (dikelas).
+     */
+    public function storing(Request $request)
+    {
+        $food = new Food();
+        $food->name = $request->name;
+        $food->description = $request->description;
+        $food->price = $request->price;
+        $food->nutritions_fact = $request->nutritions_fact;
+        $food->category_id = $request->category_id;
+        $food->save();
+        return redirect()->route('food.index')->with('success', 'Data ' . $request->name . ' berhasil ditambahkan');
+    }
 }

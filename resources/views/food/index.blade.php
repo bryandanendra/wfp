@@ -8,6 +8,14 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title mb-4">Daftar Makanan</h4>
+            
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+            </div>
+            @endif
+        
+            
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <thead class="table-dark">
