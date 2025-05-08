@@ -21,7 +21,7 @@ use App\Http\Controllers\KategoriAdminController;
 Route::get('/', function () {
     $categories = \App\Models\Category::all();
     $foods = \App\Models\Food::all();
-    return view('welcome', ['categories' => $categories, 'foods' => $foods]);
+    return view('index', ['categories' => $categories, 'foods' => $foods]);
 });
 
 Route::get('manggil-view',function(){

@@ -1,0 +1,45 @@
+DAFTAR ROUTE URL PROJECT LARAVEL10
+=====================================
+Order Flow:
+- /before_order
+- /menu/dinein
+- /menu/takeaway
+- /food/{id} (Detail makanan)
+
+Admin Panel:
+- /admin/dashboard
+- /admin/categories (CRUD Kategori)
+  - /admin/categories
+  - /admin/categories/create
+  - /admin/categories/{id}
+  - /admin/categories/{id}/edit
+  - /admin/categories/{id} (DELETE)
+
+- /admin/food (CRUD Menu)
+  - /admin/food
+  - /admin/food/create
+  - /admin/food/{id}
+  - /admin/food/{id}/edit
+  - /admin/food/{id} (DELETE)
+
+- /admin/members (CRUD Member)
+  - /admin/members
+  - /admin/members/create
+  - /admin/members/{id}
+  - /admin/members/{id}/edit
+  - /admin/members/{id} (DELETE)
+
+- /admin/orders (CRUD Order)
+  - /admin/orders
+  - /admin/orders/create
+  - /admin/orders/{id} (Detail order)
+  - /admin/orders/{id}/edit
+  - /admin/orders/{id} (DELETE)
+
+- /admin/reports (Laporan)
+
+Misc:
+- /daftar-kategori
+- /parameter-tidak-maksa/{nama?}/di/{kota?}
+- /manggil-view
+- /magic-view 
