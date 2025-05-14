@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\FoodOrder;
 use App\Models\Food;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,6 +29,78 @@ class OrderController extends Controller
             ->get();
 
         return view('admin.orders', ['orders' => $foodOrders]);
+    }
+
+    public function create()
+    {
+        $foods = Food::all();
+        $members = Member::all();
+        return view('admin.order_create', [
+            'foods' => $foods,
+            'members' => $members
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+        
+        try {
+            // Validasi data
+            $request->validate([
+                'tanggal' => 'required|date',
+                'status' => 'required|integer|between:0,3',
+                'member_id' => 'nullable|exists:members,id',
+                'food_ids' => 'required|array',
+                'food_ids.*' => 'exists:foods,id',
+                'quantities' => 'required|array',
+                'quantities.*' => 'integer|min:1',
+            ]);
+            
+            // Buat order baru
+            $order = new Order();
+            $order->tanggal = $request->tanggal;
+            $order->status = $request->status;
+            $order->member_id = $request->member_id;
+            $order->grand_total = 0; // Akan dihitung nanti
+            $order->save();
+            
+            $grandTotal = 0;
+            
+            // Simpan item menu yang dipesan
+            for ($i = 0; $i < count($request->food_ids); $i++) {
+                if (isset($request->food_ids[$i]) && isset($request->quantities[$i]) && $request->quantities[$i] > 0) {
+                    $foodId = $request->food_ids[$i];
+                    $quantity = $request->quantities[$i];
+                    
+                    $food = Food::find($foodId);
+                    $price = $food->price;
+                    
+                    // Attach dengan relasi many-to-many
+                    $order->foods()->attach($foodId, [
+                        'quantity' => $quantity,
+                        'harga_jual' => $price
+                    ]);
+                    
+                    $grandTotal += ($price * $quantity);
+                }
+            }
+            
+            // Update grand total
+            $order->grand_total = $grandTotal;
+            $order->save();
+            
+            DB::commit();
+            
+            return redirect()->route('orders.index')
+                ->with('success', 'Pesanan berhasil dibuat');
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function show($id)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class FoodController extends Controller
@@ -21,7 +22,8 @@ class FoodController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('food.create', ['categories' => $categories]);
     }
 
     /**
@@ -29,7 +31,18 @@ class FoodController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'required|max:255',
+            'nutritions_fact' => 'required',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+
+        $food = Food::create($validated);
+        
+        return redirect()->route('food.index')
+            ->with('success', 'Menu ' . $food->name . ' berhasil ditambahkan');
     }
 
     /**
@@ -37,7 +50,7 @@ class FoodController extends Controller
      */
     public function show(Food $food)
     {
-        //
+        return view('food.show', ['food' => $food]);
     }
 
     /**
@@ -45,7 +58,11 @@ class FoodController extends Controller
      */
     public function edit(Food $food)
     {
-        //
+        $categories = Category::all();
+        return view('food.edit', [
+            'food' => $food,
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -53,7 +70,18 @@ class FoodController extends Controller
      */
     public function update(Request $request, Food $food)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'required|max:255',
+            'nutritions_fact' => 'required',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+
+        $food->update($validated);
+        
+        return redirect()->route('food.index')
+            ->with('success', 'Menu ' . $food->name . ' berhasil diperbarui');
     }
 
     /**
@@ -61,7 +89,11 @@ class FoodController extends Controller
      */
     public function destroy(Food $food)
     {
-        //
+        $foodName = $food->name;
+        $food->delete();
+        
+        return redirect()->route('food.index')
+            ->with('success', 'Menu ' . $foodName . ' berhasil dihapus');
     }
 
     /**
