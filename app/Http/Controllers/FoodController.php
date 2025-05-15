@@ -89,11 +89,16 @@ class FoodController extends Controller
      */
     public function destroy(Food $food)
     {
-        $foodName = $food->name;
-        $food->delete();
-        
-        return redirect()->route('food.index')
-            ->with('success', 'Menu ' . $foodName . ' berhasil dihapus');
+        try {
+            $foodName = $food->name;
+            $food->delete();
+            
+            return redirect()->route('food.index')
+                ->with('success', 'Menu ' . $foodName . ' berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->route('food.index')
+                ->with('error', 'Terjadi kesalahan saat menghapus menu: ' . $e->getMessage());
+        }
     }
 
     /**

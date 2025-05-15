@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Exception;
 
 class KategoriAdminController extends Controller
 {
@@ -58,12 +59,16 @@ class KategoriAdminController extends Controller
     
     public function destroy(Category $category)
     {
-        // Periksa apakah kategori digunakan oleh makanan
-        if ($category->foods->count() > 0) {
-            return redirect()->route('categories.index')->with('error', 'Kategori tidak dapat dihapus karena digunakan oleh beberapa produk');
+        try {
+            // Periksa apakah kategori digunakan oleh makanan
+            if ($category->foods->count() > 0) {
+                return redirect()->route('categories.index')->with('error', 'Kategori tidak dapat dihapus karena digunakan oleh beberapa produk');
+            }
+            
+            $category->delete();
+            return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
+        } catch (Exception $e) {
+            return redirect()->route('categories.index')->with('error', 'Terjadi kesalahan saat menghapus kategori: ' . $e->getMessage());
         }
-        
-        $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
     }
 } 

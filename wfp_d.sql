@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 17, 2025 at 09:22 AM
+-- Generation Time: May 14, 2025 at 06:28 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -43,9 +43,12 @@ INSERT INTO `categories` (`id`, `name`, `description`, `created_at`, `updated_at
 (1, 'Books', NULL, NULL, NULL),
 (2, 'Appetizer', NULL, NULL, NULL),
 (3, 'Main Course', NULL, NULL, NULL),
-(4, 'Dessert', NULL, NULL, NULL),
+(4, 'Dessert', 'ice cream, cake', NULL, '2025-04-17 01:31:16'),
 (5, 'Beverage', NULL, NULL, NULL),
-(6, 'Drug', 'illegal', '2024-11-09 17:00:00', '2025-03-11 17:00:00');
+(6, 'Drug', 'illegal', '2024-11-09 17:00:00', '2025-03-11 17:00:00'),
+(7, 'DRUGS', 'narkobas', '2025-05-08 00:37:09', '2025-05-08 00:45:29'),
+(8, 'komponen', 'abc', '2025-05-08 00:38:34', '2025-05-08 00:45:25'),
+(9, 'a', 'd', '2025-05-08 00:48:10', '2025-05-08 00:48:10');
 
 -- --------------------------------------------------------
 
@@ -374,7 +377,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`

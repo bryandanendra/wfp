@@ -11,6 +11,11 @@
     </div>
     @endif
     
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+    </div>
+    @endif
     
     <div class="card">
         <div class="card-body">
@@ -39,9 +44,17 @@
                             <td>{{ $category->description ?? '-' }}</td>
                             <!-- <td>{{ $category->foods->count() }}</td> -->
                             <td>
-                                <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm" style="background-color: #7A73D1; color: white;">Edit</a>
-                                <button type="button" class="btn btn-sm" style="background-color: #7A73D1; color: white;" data-bs-toggle="modal" data-bs-target="#categoryModal{{ $category->id }}">
-                                    Detail</buton>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm" style="background-color: #7A73D1; color: white;">Edit</a>
+                                    <button type="button" class="btn btn-sm" style="background-color: #7A73D1; color: white;" data-bs-toggle="modal" data-bs-target="#categoryModal{{ $category->id }}">
+                                        Detail
+                                    </button>
+                                    <form action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori {{ $category->name }}?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty
