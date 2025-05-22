@@ -199,4 +199,82 @@ class OrderController extends Controller
             'recentOrders' => $recentOrders
         ]);
     }
+
+    /**
+     * Get edit form for Ajax request (Type A).
+     */
+    public function getEditForm(Request $request)
+    {
+        $id = $request->id;
+        $data = Order::find($id);
+        $members = \App\Models\Member::all();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => view('orders.getEditForm', compact('data', 'members'))->render()
+        ], 200);
+    }
+    
+    /**
+     * Get edit form for Ajax request (Type B).
+     */
+    public function getEditFormB(Request $request)
+    {
+        $id = $request->id;
+        $data = Order::find($id);
+        $members = \App\Models\Member::all();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => view('orders.getEditFormB', compact('data', 'members'))->render()
+        ], 200);
+    }
+    
+    /**
+     * Update order data via Ajax without page refresh.
+     */
+    public function saveDataUpdate(Request $request)
+    {
+        $id = $request->id;
+        $data = Order::find($id);
+        
+        if ($request->has('tanggal')) {
+            $data->tanggal = $request->tanggal;
+        }
+        if ($request->has('status')) {
+            $data->status = $request->status;
+        }
+        if ($request->has('member_id')) {
+            $data->member_id = $request->member_id;
+        }
+        if ($request->has('type')) {
+            $data->type = $request->type;
+        }
+        
+        $data->save();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => 'Order data is up-to-date !'
+        ], 200);
+    }
+    
+    /**
+     * Delete order data via Ajax without page refresh.
+     */
+    public function deleteData(Request $request)
+    {
+        $id = $request->id;
+        $data = Order::find($id);
+        
+        // Hapus detail order terlebih dahulu
+        $data->foods()->detach();
+        
+        $data->delete();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => 'Order data is removed !'
+        ], 200);
+    }
 } 

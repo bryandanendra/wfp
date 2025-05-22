@@ -115,4 +115,84 @@ class FoodController extends Controller
         $food->save();
         return redirect()->route('food.index')->with('success', 'Data ' . $request->name . ' berhasil ditambahkan');
     }
+    
+    /**
+     * Get edit form for Ajax request (Type A).
+     */
+    public function getEditForm(Request $request)
+    {
+        $id = $request->id;
+        $data = Food::find($id);
+        $categories = Category::all();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => view('food.getEditForm', compact('data', 'categories'))->render()
+        ], 200);
+    }
+    
+    /**
+     * Get edit form for Ajax request (Type B).
+     */
+    public function getEditFormB(Request $request)
+    {
+        $id = $request->id;
+        $data = Food::find($id);
+        $categories = Category::all();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => view('food.getEditFormB', compact('data', 'categories'))->render()
+        ], 200);
+    }
+    
+    /**
+     * Update food data via Ajax without page refresh.
+     */
+    public function saveDataUpdate(Request $request)
+    {
+        $id = $request->id;
+        $data = Food::find($id);
+        $data->name = $request->name;
+        $data->price = $request->price;
+        if ($request->has('description')) {
+            $data->description = $request->description;
+        }
+        if ($request->has('nutritions_fact')) {
+            $data->nutritions_fact = $request->nutritions_fact;
+        }
+        if ($request->has('category_id')) {
+            $data->category_id = $request->category_id;
+        }
+        $data->save();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => 'Food data is up-to-date !'
+        ], 200);
+    }
+    
+    /**
+     * Delete food data via Ajax without page refresh.
+     */
+    public function deleteData(Request $request)
+    {
+        $id = $request->id;
+        $data = Food::find($id);
+        
+        // Periksa jika makanan digunakan dalam order
+        if ($data->orders()->count() > 0) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => 'Food tidak dapat dihapus karena digunakan dalam beberapa order'
+            ], 422);
+        }
+        
+        $data->delete();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => 'Food data is removed !'
+        ], 200);
+    }
 }

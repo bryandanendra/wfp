@@ -67,7 +67,23 @@ Route::prefix('admin')->group(function () {
     Route::resource('orders', OrderController::class);
 });
 
-Route::get('daftar-kategori',[KategoriController::class,'index']);
+// Route untuk CRUD dengan Ajax dan Modal untuk Kategori
+Route::post('/ajax/category/getEditForm', [KategoriAdminController::class, 'getEditForm'])->name('kategori.getEditForm');
+Route::post('/ajax/category/getEditFormB', [KategoriAdminController::class, 'getEditFormB'])->name('kategori.getEditFormB');
+Route::post('/ajax/category/saveDataUpdate', [KategoriAdminController::class, 'saveDataUpdate'])->name('kategori.saveDataUpdate');
+Route::post('/ajax/category/deleteData', [KategoriAdminController::class, 'deleteData'])->name('kategori.deleteData');
+
+// Route untuk CRUD dengan Ajax dan Modal untuk Food
+Route::post('/ajax/food/getEditForm', [FoodController::class, 'getEditForm'])->name('food.getEditForm');
+Route::post('/ajax/food/getEditFormB', [FoodController::class, 'getEditFormB'])->name('food.getEditFormB');
+Route::post('/ajax/food/saveDataUpdate', [FoodController::class, 'saveDataUpdate'])->name('food.saveDataUpdate');
+Route::post('/ajax/food/deleteData', [FoodController::class, 'deleteData'])->name('food.deleteData');
+
+// Route untuk CRUD dengan Ajax dan Modal untuk Order
+Route::post('/ajax/orders/getEditForm', [OrderController::class, 'getEditForm'])->name('orders.getEditForm');
+Route::post('/ajax/orders/getEditFormB', [OrderController::class, 'getEditFormB'])->name('orders.getEditFormB');
+Route::post('/ajax/orders/saveDataUpdate', [OrderController::class, 'saveDataUpdate'])->name('orders.saveDataUpdate');
+Route::post('/ajax/orders/deleteData', [OrderController::class, 'deleteData'])->name('orders.deleteData');
 
 Route::get('/food/{id}', function ($id) {
     $food = \App\Models\Food::findOrFail($id);

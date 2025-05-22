@@ -71,4 +71,64 @@ class KategoriAdminController extends Controller
             return redirect()->route('categories.index')->with('error', 'Terjadi kesalahan saat menghapus kategori: ' . $e->getMessage());
         }
     }
+    
+    // Ajax Methods
+    public function getEditForm(Request $request)
+    {
+        $id = $request->id;
+        $data = Category::find($id);
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => view('kategori.getEditForm', compact('data'))->render()
+        ], 200);
+    }
+    
+    public function getEditFormB(Request $request)
+    {
+        $id = $request->id;
+        $data = Category::find($id);
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => view('kategori.getEditFormB', compact('data'))->render()
+        ], 200);
+    }
+    
+    public function saveDataUpdate(Request $request)
+    {
+        $id = $request->id;
+        $data = Category::find($id);
+        $data->name = $request->name;
+        if ($request->has('description')) {
+            $data->description = $request->description;
+        }
+        $data->save();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => 'type data is up-to-date !'
+        ], 200);
+    }
+    
+    public function deleteData(Request $request)
+    {
+        $id = $request->id;
+        $data = Category::find($id);
+        
+        // Periksa jika kategori digunakan oleh makanan
+        if ($data->foods->count() > 0) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => 'Kategori tidak dapat dihapus karena digunakan oleh beberapa produk'
+            ], 422);
+        }
+        
+        $data->delete();
+        
+        return response()->json([
+            'status' => 'oke',
+            'msg' => 'type data is removed !'
+        ], 200);
+    }
 } 

@@ -1,0 +1,37 @@
+<h3>Update Order</h3>
+<form method="POST" action="{{ route('orders.update', $data->id) }}">
+    @csrf
+    @method('PUT')
+    <div class="form-group mb-3">
+        <label for="tanggal">Tanggal</label>
+        <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{ $data->tanggal }}">
+    </div>
+    <div class="form-group mb-3">
+        <label for="status">Status</label>
+        <select class="form-control" id="status" name="status">
+            <option value="new" {{ $data->status == 'new' ? 'selected' : '' }}>New</option>
+            <option value="process" {{ $data->status == 'process' ? 'selected' : '' }}>Process</option>
+            <option value="done" {{ $data->status == 'done' ? 'selected' : '' }}>Done</option>
+            <option value="cancel" {{ $data->status == 'cancel' ? 'selected' : '' }}>Cancel</option>
+        </select>
+    </div>
+    <div class="form-group mb-3">
+        <label for="type">Type</label>
+        <select class="form-control" id="type" name="type">
+            <option value="dinein" {{ $data->type == 'dinein' ? 'selected' : '' }}>Dine In</option>
+            <option value="takeaway" {{ $data->type == 'takeaway' ? 'selected' : '' }}>Take Away</option>
+        </select>
+    </div>
+    <div class="form-group mb-3">
+        <label for="member_id">Member</label>
+        <select class="form-control" id="member_id" name="member_id">
+            <option value="">-- Pilih Member --</option>
+            @foreach($members as $member)
+                <option value="{{ $member->id }}" {{ $data->member_id == $member->id ? 'selected' : '' }}>
+                    {{ $member->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form> 

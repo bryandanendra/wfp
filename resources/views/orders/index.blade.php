@@ -1,79 +1,92 @@
 @extends('layouts.admin')
 
-@section('title', 'Daftar Kategori Menu')
-@section('kategori-active', 'active')
+@section('title', 'Daftar Order')
+@section('order-active', 'active')
 
 @section('content')
 <div class="container-fluid">
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
     
     @if(session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
     
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="card-title">Daftar Kategori Menu</h4>
+                <h4 class="card-title">Daftar Order</h4>
                 <div>
                     <button type="button" class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#btnFormModal">
-                        <i class="fas fa-plus"></i> New Category (Modal)
+                        <i class="fas fa-plus"></i> New Order (Modal)
                     </button>
-                    <a href="{{ route('categories.create') }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> New Category
+                    <a href="{{ route('orders.create') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> New Order
                     </a>
                 </div>
-            </div>        
+            </div>
+            
             <div class="table-responsive">
-                <h4>Category with Hover Rows</h4>
-                
                 <table class="table table-hover table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Number of Food</th>
+                            <th>Tanggal</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Member</th>
+                            <th>Total</th>
                             <th style="width: 280px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($categories as $category)
-                        <tr id="tr_{{ $category->id }}">
-                            <td>{{ $category->id }}</td>
-                            <td id="td_name_{{ $category->id }}">{{ $category->name }}</td>
-                            <td>{{ $category->description ?? '-' }}</td>
-                            <td>{{ $category->foods->count() }}</td>
+                        @forelse ($orders as $order)
+                        <tr id="tr_{{ $order->id }}">
+                            <td>{{ $order->id }}</td>
+                            <td>{{ $order->tanggal }}</td>
+                            <td id="td_status_{{ $order->id }}">
+                                <span class="badge bg-{{ 
+                                    $order->status == 'new' ? 'primary' : 
+                                    ($order->status == 'process' ? 'warning' : 
+                                    ($order->status == 'done' ? 'success' : 'danger')) 
+                                }}">
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                            </td>
+                            <td>{{ ucfirst($order->type) }}</td>
+                            <td>{{ $order->member->name ?? 'Guest' }}</td>
+                            <td>{{ number_format($order->foods->sum('pivot.subtotal'), 0, ',', '.') }}</td>
                             <td>
                                 <div class="d-flex gap-1 flex-wrap">
-                                    <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                     
                                     <a href="#modalEditA" class="btn btn-sm btn-warning" data-bs-toggle="modal" 
-                                    onclick="getEditForm({{ $category->id }})">
+                                    onclick="getEditForm({{ $order->id }})">
                                         <i class="fas fa-edit"></i> Type A
                                     </a>
                                     
                                     <a href="#modalEditB" class="btn btn-sm btn-info" data-bs-toggle="modal" 
-                                    onclick="getEditFormB({{ $category->id }})">
+                                    onclick="getEditFormB({{ $order->id }})">
                                         <i class="fas fa-bolt"></i> Type B
                                     </a>
                                     
                                     <a href="#" class="btn btn-sm btn-danger"
-                                    onclick="if(confirm('Are you sure to delete {{ $category->id }} - {{ $category->name }} ? '))
-                                    deleteDataRemove({{ $category->id }})">
+                                    onclick="if(confirm('Are you sure to delete Order #{{ $order->id }}?'))
+                                    deleteDataRemove({{ $order->id }})">
                                         <i class="fas fa-trash"></i> No-Reload
                                     </a>
                                     
-                                    <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline" 
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori {{ $category->name }}?');">
+                                    <form action="{{ route('orders.destroy', $order->id) }}" method="POST" class="d-inline" 
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus Order #{{ $order->id }}?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">
@@ -85,7 +98,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center">Tidak ada data kategori</td>
+                            <td colspan="7" class="text-center">Tidak ada data order</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -95,27 +108,46 @@
     </div>
 </div>
 
-<!-- Modal Form Add New Category -->
+<!-- Modal Form Add New Order -->
 @push('modals')
 <div class="modal fade" id="btnFormModal" tabindex="-1" role="basic" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Add New Category</h4>
+                <h4 class="modal-title">Add New Order</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('categories.store') }}">
+                <form method="POST" action="{{ route('orders.store') }}">
                     @csrf
                     <div class="form-group mb-3">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" aria-describedby="name"
-                               placeholder="Enter Category Name">
-                        <small id="name" class="form-text text-muted">Please write down Category Name here.</small>
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{ date('Y-m-d') }}">
                     </div>
                     <div class="form-group mb-3">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter Category Description"></textarea>
+                        <label for="status">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="new">New</option>
+                            <option value="process">Process</option>
+                            <option value="done">Done</option>
+                            <option value="cancel">Cancel</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="type">Type</label>
+                        <select class="form-control" id="type" name="type">
+                            <option value="dinein">Dine In</option>
+                            <option value="takeaway">Take Away</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="member_id">Member</label>
+                        <select class="form-control" id="member_id" name="member_id">
+                            <option value="">-- Pilih Member --</option>
+                            @foreach(\App\Models\Member::all() as $member)
+                                <option value="{{ $member->id }}">{{ $member->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -133,7 +165,7 @@
     <div class="modal-dialog modal-wide">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Edit Category</h4>
+                <h4 class="modal-title">Edit Order</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modalContent">
@@ -148,7 +180,7 @@
     <div class="modal-dialog modal-wide">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Quick Edit Category</h4>
+                <h4 class="modal-title">Quick Edit Order</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modalContentB">
@@ -163,7 +195,7 @@
     function getEditForm(id) {
         $.ajax({
             type: 'POST',
-            url: '{{ route("kategori.getEditForm") }}',
+            url: '{{ route("orders.getEditForm") }}',
             data: {
                 '_token': '<?php echo csrf_token() ?>',
                 'id': id
@@ -177,7 +209,7 @@
     function getEditFormB(id) {
         $.ajax({
             type: 'POST',
-            url: '{{ route("kategori.getEditFormB") }}',
+            url: '{{ route("orders.getEditFormB") }}',
             data: {
                 '_token': '<?php echo csrf_token() ?>',
                 'id': id
@@ -189,22 +221,32 @@
     }
     
     function saveDataUpdate(id) {
-        var name = $('#ename').val();
-        var description = $('#edescription').val();
+        var tanggal = $('#etanggal').val();
+        var status = $('#estatus').val();
+        var type = $('#etype').val();
+        var member_id = $('#emember_id').val();
         
-        console.log(name); //debug->print to browser console
         $.ajax({
             type: 'POST',
-            url: '{{ route("kategori.saveDataUpdate") }}',
+            url: '{{ route("orders.saveDataUpdate") }}',
             data: {
                 '_token': '<?php echo csrf_token() ?>',
                 'id': id,
-                'name': name,
-                'description': description
+                'tanggal': tanggal,
+                'status': status,
+                'type': type,
+                'member_id': member_id
             },
             success: function(data) {
                 if (data.status == "oke") {
-                    $('#td_name_' + id).html(name);
+                    // Perbarui status dengan badge yang sesuai
+                    var badgeClass = '';
+                    if (status == 'new') badgeClass = 'bg-primary';
+                    else if (status == 'process') badgeClass = 'bg-warning';
+                    else if (status == 'done') badgeClass = 'bg-success';
+                    else badgeClass = 'bg-danger';
+                    
+                    $('#td_status_' + id).html('<span class="badge ' + badgeClass + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span>');
                     $('#modalEditB').modal('hide');
                     // Tambahkan notifikasi sukses
                     alert('Data successfully updated!');
@@ -216,7 +258,7 @@
     function deleteDataRemove(id) {
         $.ajax({
             type: 'POST',
-            url: '{{ route("kategori.deleteData") }}',
+            url: '{{ route("orders.deleteData") }}',
             data: {
                 '_token': '<?php echo csrf_token() ?>',
                 'id': id
@@ -234,39 +276,5 @@
     }
 </script>
 @endpush
-
-@foreach($categories as $category)
-<div class="modal fade" id="categoryModal{{ $category->id }}" tabindex="-1" aria-labelledby="categoryModalLabel{{ $category->id }}" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: blue; color: white;">
-                <h5 class="modal-title" id="categoryModalLabel{{ $category->id }}">{{ $category->name }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted">Informasi Kategori</h6>
-                        <p><strong>Nama:</strong> {{ $category->name }}</p>
-                        <p><strong>Deskripsi:</strong> {{ $category->description ?? '-' }}</p>
-                        
-                        <h6 class="mt-4">Daftar Produk:</h6>
-                        <ul class="list-group">
-                            @forelse($category->foods as $food)
-                                <li class="list-group-item">{{ $food->name }}</li>
-                            @empty
-                                <li class="list-group-item">Tidak ada produk</li>
-                            @endforelse
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div>
-@endforeach
 
 @endsection 

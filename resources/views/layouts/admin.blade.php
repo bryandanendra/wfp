@@ -134,6 +134,8 @@
                     @yield('content')
                 </main>
                 
+                @stack('modals')
+                
                 <footer class="footer">
                     <p>&copy; 2025 Shopee Food. All Rights Reserved.</p>
                 </footer>
@@ -142,5 +144,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @stack('script')
 </body>
 </html> 
