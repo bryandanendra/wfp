@@ -9,10 +9,10 @@
     <div class="form-group mb-3">
         <label for="status">Status</label>
         <select class="form-control" id="status" name="status">
-            <option value="new" {{ $data->status == 'new' ? 'selected' : '' }}>New</option>
-            <option value="process" {{ $data->status == 'process' ? 'selected' : '' }}>Process</option>
-            <option value="done" {{ $data->status == 'done' ? 'selected' : '' }}>Done</option>
-            <option value="cancel" {{ $data->status == 'cancel' ? 'selected' : '' }}>Cancel</option>
+            <option value="0" {{ $data->status == 0 ? 'selected' : '' }}>Baru</option>
+            <option value="1" {{ $data->status == 1 ? 'selected' : '' }}>Proses</option>
+            <option value="2" {{ $data->status == 2 ? 'selected' : '' }}>Selesai</option>
+            <option value="3" {{ $data->status == 3 ? 'selected' : '' }}>Batal</option>
         </select>
     </div>
     <div class="form-group mb-3">
